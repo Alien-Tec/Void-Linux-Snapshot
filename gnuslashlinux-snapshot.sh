@@ -213,8 +213,16 @@ mkdir -p "$WORKDIR/iso/live"
 mksquashfs "$WORKDIR/rootfs" "$WORKDIR/iso/live/rootfs.squashfs" -comp "$COMP_MODE"
 
 echo "[7/7] Generiere Grub Bootloader für das ISO..."
+# Fix: Da wir dracut direkt vom Host ausgeführt haben, kopieren wir den Kernel vom Host
 cp "/boot/vmlinuz-$KERNEL_VERSION" "$WORKDIR/iso/boot/vmlinuz"
-cp "$WORKDIR/rootfs/boot/initramfs-live.img" "$WORKDIR/iso/boot/initramfs"
+
+# Fix: Da dracut das Image bereits im Zielordner abgelegt hat, benennen wir es dort einfach um
+if [ -f "$WORKDIR/iso/boot/initramfs-live.img" ]; then
+  mv "$WORKDIR/iso/boot/initramfs-live.img" "$WORKDIR/iso/boot/initramfs"
+else
+  # Sicherheitsnetz, falls es doch im rootfs gelandet sein sollte
+  cp "$WORKDIR/rootfs/boot/initramfs-live.img" "$WORKDIR/iso/boot/initramfs"
+fi
 
 ACTIVE_GRUB_THEME=$(grep -Po '(?<=GRUB_THEME=").*(?=")' /etc/default/grub 2>/dev/null)
 if [ -n "$ACTIVE_GRUB_THEME" ] && [ -d "$ACTIVE_GRUB_THEME" ]; then
