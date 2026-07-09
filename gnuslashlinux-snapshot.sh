@@ -246,7 +246,27 @@ menuentry "GNUSlashLinux Live Snapshot ($ISO_BASE_NAME)" {
 }
 EOF
 
-grub-mkrescue -o "$TARGET_ISO" "$WORKDIR/iso" -- -as mkisofs -iso-level 3 -volid "GNUSLASH_SNAPSHOT"
+# --- AB HIER ERSETZT DER NATIVE XORRISO-BEFEHL DEN ALTEN GRUB-MKRESCUE-AUFRUF ---
+
+# 1. Verzeichnis für das EFI-Boot-Image erstellen
+mkdir -p "$WORKDIR/iso/boot/grub/x86_64-efi"
+
+# 2. Das EFI-Standalone-Image erzeugen, welches nach dem Booten die grub.cfg im ISO liest
+grub-mkstandalone -O x86_64-efi -o "$WORKDIR/iso/boot/efi.img" --format=x86_64-efi
+
+# 3. Der native xorriso-Aufruf (hebelt das 4GB-Limit per Level 3 aus und baut die UEFI-Struktur für Ventoy)
+xorriso -as mkisofs \
+  -iso-level 3 \
+  -full-iso9660-filenames \
+  -volid "GNUSLASH_SNAPSHOT" \
+  -eltorito-alt-boot \
+  -e boot/efi.img \
+  -no-emul-boot \
+  -isohybrid-gpt-basdat \
+  -output "$TARGET_ISO" \
+  "$WORKDIR/iso"
+
+# ---------------------------------------------------------------------------------
 
 if [ $? -eq 0 ]; then
   echo "=================================================="
