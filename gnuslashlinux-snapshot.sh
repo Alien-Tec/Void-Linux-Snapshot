@@ -73,7 +73,7 @@ echo "Starte Snapshot: $ISO_NAME (Comp: $COMP_MODE)"
 echo "=================================================="
 
 # UEFI-Bootfähigkeit für das ISO garantieren
-xbps-install -Sy squashfs-tools xorriso grub-imgboot libisoburn rsync perl dracut grub-x86_64-efi
+xbps-install -Sy squashfs-tools xorriso libisoburn rsync perl dracut grub-x86_64-efi
 
 # Altes Verzeichnis vor dem Start sauber aufräumen
 if [ -d "$WORKDIR" ]; then
