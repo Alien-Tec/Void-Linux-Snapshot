@@ -202,21 +202,14 @@ KERNEL_VERSION=$(uname -r)
 # Dracut-Warnungen und unkritische Mount-Verzögerungen temporär ignorieren
 trap - ERR
 
-# Isoliertes /run als tmpfs einbinden, um Dracut-Lock-Fehler im Chroot zu unterbinden
-mount --bind /dev "$WORKDIR/rootfs/dev"
-mount --bind /dev/pts "$WORKDIR/rootfs/dev/pts"
-mount --bind /proc "$WORKDIR/rootfs/proc"
-mount --bind /sys "$WORKDIR/rootfs/sys"
-mount -t tmpfs tmpfs "$WORKDIR/rootfs/run"
-
-# --tmpdir /tmp hinzugefügt, um dracut von Host-Sperren abzukoppeln
-chroot "$WORKDIR/rootfs" dracut --no-hostonly --tmpdir /tmp --add "dmsquash-live livenet" --force "/boot/initramfs-live.img" "$KERNEL_VERSION"
-
-# Träges Aushängen aller Schnittstellen nach der Generierung
-umount -l -R "$WORKDIR/rootfs/dev"
-umount -l "$WORKDIR/rootfs/proc"
-umount -l "$WORKDIR/rootfs/sys"
-umount -l "$WORKDIR/rootfs/run"
+# Wir führen dracut direkt vom Host aus, nutzen aber die Pfade des rootfs. 
+# Das verhindert Chroot- und /tmp-Sperren komplett.
+dracut --no-hostonly \
+       --kver "$KERNEL_VERSION" \
+       --basedir "$WORKDIR/rootfs" \
+       --add "dmsquash-live livenet" \
+       --force \
+       "$WORKDIR/rootfs/boot/initramfs-live.img"
 
 # Erst JETZT den Trap für die nachfolgenden Hauptprozesse (SquashFS & xorriso) wieder aktivieren
 trap cleanup_on_error SIGINT SIGTERM ERR
@@ -265,4 +258,7 @@ fi
 
 # Reguläres Aufräumen am Ende des Skripts (deaktiviert den Fehler-Trap)
 trap - SIGINT SIGTERM ERR EXIT
-rm -rf "$WORKDIR"
+
+# Verzeichnis NICHT löschen, sondern nur eine Info ausgeben
+echo "[INFO] Arbeitsverzeichnis '$WORKDIR' wurde zur manuellen Überprüfung beibehalten."
+# rm -rf "$WORKDIR"
