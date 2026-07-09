@@ -202,8 +202,8 @@ KERNEL_VERSION=$(uname -r)
 # Dracut-Warnungen und unkritische Mount-Verzögerungen temporär ignorieren
 trap - ERR
 
-# Die offizielle Option für alternative Root-Pfade lautet --sysroot (oder -r)
-dracut --no-hostonly --kver "$KERNEL_VERSION" --sysroot "$WORKDIR/rootfs" --add "dmsquash-live livenet" --force "$WORKDIR/rootfs/boot/initramfs-live.img"
+# livenet entfernt – nur dmsquash-live wird für Ventoy/USB benötigt
+dracut --no-hostonly --kver "$KERNEL_VERSION" --sysroot "$WORKDIR/rootfs" --add "dmsquash-live" --force "$WORKDIR/rootfs/boot/initramfs-live.img"
 
 # Erst JETZT den Trap für die nachfolgenden Hauptprozesse (SquashFS & xorriso) wieder aktivieren
 trap cleanup_on_error SIGINT SIGTERM ERR
