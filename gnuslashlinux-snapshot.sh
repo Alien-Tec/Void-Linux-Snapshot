@@ -202,14 +202,8 @@ KERNEL_VERSION=$(uname -r)
 # Dracut-Warnungen und unkritische Mount-Verzögerungen temporär ignorieren
 trap - ERR
 
-# Wir führen dracut direkt vom Host aus, nutzen aber die Pfade des rootfs. 
-# Das verhindert Chroot- und /tmp-Sperren komplett.
-dracut --no-hostonly \
-       --kver "$KERNEL_VERSION" \
-       --basedir "$WORKDIR/rootfs" \
-       --add "dmsquash-live livenet" \
-       --force \
-       "$WORKDIR/rootfs/boot/initramfs-live.img"
+# Der gesamte Befehl in einer einzigen Zeile geschrieben:
+dracut --no-hostonly --kver "$KERNEL_VERSION" --basedir "$WORKDIR/rootfs" --add "dmsquash-live livenet" --force "$WORKDIR/rootfs/boot/initramfs-live.img"
 
 # Erst JETZT den Trap für die nachfolgenden Hauptprozesse (SquashFS & xorriso) wieder aktivieren
 trap cleanup_on_error SIGINT SIGTERM ERR
