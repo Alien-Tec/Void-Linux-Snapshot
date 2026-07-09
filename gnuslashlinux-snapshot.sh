@@ -39,7 +39,7 @@ echo "==============================================="
 
 # 1. Vorab-Check für den benötigten Speicherplatz
 NEEDED_GB=$(du -s / --exclude=/proc --exclude=/sys --exclude=/dev --exclude=/tmp --exclude=/mnt --exclude=/media 2>/dev/null | awk '{print int($1/1024/1024 * 2.1)}')
-AVAILABLE_GB=$(df -BG /tmp | tail -1 | awk '{print $4}' | sed 's/G//')
+AVAILABLE_GB=$( df -BG "$(dirname "$WORKDIR")" | tail -1 | awk '{print $4}' | sed 's/G//')
 
 echo "[i] Geschätzter temporärer Platzbedarf: ~${NEEDED_GB} GB"
 echo "[i] Verfügbarer Platz in /tmp: ${AVAILABLE_GB} GB"
