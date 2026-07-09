@@ -246,7 +246,7 @@ menuentry "GNUSlashLinux Live Snapshot ($ISO_BASE_NAME)" {
 }
 EOF
 
-grub-mkrescue -o "$TARGET_ISO" "$WORKDIR/iso" -- -volid "GNUSLASH_SNAPSHOT"
+grub-mkrescue -o "$TARGET_ISO" "$WORKDIR/iso" -- -iso-level 3 -volid "GNUSLASH_SNAPSHOT"
 
 if [ $? -eq 0 ]; then
   echo "=================================================="
