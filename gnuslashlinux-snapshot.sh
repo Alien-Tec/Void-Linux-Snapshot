@@ -11,7 +11,7 @@ if [ -z "$REAL_USER" ] || [ "$REAL_USER" == "root" ]; then
   exit 1
 fi
 
-WORKDIR="/tmp/gnuslashlinux-snapshot-build"
+WORKDIR="/home/snapshot/build-temp"
 TARGET_DIR="/home/snapshot"
 
 # Sicherheits-Cleanup-Funktion NUR für unvorhergesehene Abbrüche (Fehler oder Strg+C)
